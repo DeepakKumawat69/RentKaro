@@ -63,3 +63,44 @@ export const cancelBooking = async (bookingId) => {
     return null
   }
 }
+
+export const getPaymentMethods = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/payment-methods`)
+    if (!response.ok) throw new Error('Failed to fetch payment methods')
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching payment methods:', error)
+    return []
+  }
+}
+
+export const addPaymentMethod = async (paymentData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/payment-methods`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(paymentData)
+    })
+    if (!response.ok) throw new Error('Failed to add payment method')
+    return await response.json()
+  } catch (error) {
+    console.error('Error adding payment method:', error)
+    return null
+  }
+}
+
+export const deletePaymentMethod = async (paymentMethodId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/payment-methods/${paymentMethodId}`, {
+      method: 'DELETE'
+    })
+    if (!response.ok) throw new Error('Failed to delete payment method')
+    return await response.json()
+  } catch (error) {
+    console.error('Error deleting payment method:', error)
+    return null
+  }
+}

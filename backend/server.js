@@ -24,6 +24,10 @@ let vehicles = [
 let bookings = []
 let nextBookingId = 1
 
+// Payment methods storage
+let paymentMethods = []
+let nextPaymentMethodId = 1
+
 // Routes
 
 // Get all vehicles
@@ -57,16 +61,21 @@ app.get('/api/vehicles/:id', (req, res) => {
 
 // Create booking
 app.post('/api/bookings', (req, res) => {
-  const { vehicleId, startDate, endDate, customerName, customerEmail } = req.body
+  const { vehicleId, startDate, endDate, customerName, customerEmail, paymentMethodId } = req.body
 
   // Validation
-  if (!vehicleId || !startDate || !endDate || !customerName || !customerEmail) {
+  if (!vehicleId || !startDate || !endDate || !customerName || !customerEmail || !paymentMethodId) {
     return res.status(400).json({ message: 'Missing required fields' })
   }
 
   const vehicle = vehicles.find(v => v.id === vehicleId)
   if (!vehicle) {
     return res.status(404).json({ message: 'Vehicle not found' })
+  }
+
+  const paymentMethod = paymentMethods.find(pm => pm.id === paymentMethodId)
+  if (!paymentMethod) {
+    return res.status(404).json({ message: 'Payment method not found' })
   }
 
   // Calculate cost
@@ -85,6 +94,8 @@ app.post('/api/bookings', (req, res) => {
     totalCost,
     customerName,
     customerEmail,
+    paymentMethodId,
+    paymentMethodType: paymentMethod.type,
     status: 'confirmed',
     createdAt: new Date()
   }
@@ -131,6 +142,56 @@ app.delete('/api/bookings/:id', (req, res) => {
   }
 
   res.json({ message: 'Booking cancelled successfully' })
+})
+
+// Payment Methods Routes
+// Get all payment methods
+app.get('/api/payment-methods', (req, res) => {
+  res.json(paymentMethods)
+})
+
+// Add payment method
+app.post('/api/payment-methods', (req, res) => {
+  const { type, cardNumber, cardHolder, expiryDate, cvv } = req.body
+
+  // Validation
+  if (!type || !cardNumber || !cardHolder || !expiryDate || !cvv) {
+    return res.status(400).json({ message: 'Missing required fields' })
+  }
+
+  // Validate card number (basic check - 16 digits)
+  if (!/^\d{16}$/.test(cardNumber.replace(/\s/g, ''))) {
+    return res.status(400).json({ message: 'Invalid card number' })
+  }
+
+  // Validate CVV (3-4 digits)
+  if (!/^\d{3,4}$/.test(cvv)) {
+    return res.status(400).json({ message: 'Invalid CVV' })
+  }
+
+  const paymentMethod = {
+    id: nextPaymentMethodId++,
+    type,
+    cardNumber: cardNumber.slice(-4).padStart(cardNumber.length, '*'), // Mask the card number
+    cardHolder,
+    expiryDate,
+    createdAt: new Date()
+  }
+
+  paymentMethods.push(paymentMethod)
+  res.status(201).json(paymentMethod)
+})
+
+// Delete payment method
+app.delete('/api/payment-methods/:id', (req, res) => {
+  const methodIndex = paymentMethods.findIndex(pm => pm.id === parseInt(req.params.id))
+
+  if (methodIndex === -1) {
+    return res.status(404).json({ message: 'Payment method not found' })
+  }
+
+  paymentMethods.splice(methodIndex, 1)
+  res.json({ message: 'Payment method deleted successfully' })
 })
 
 // Health check
