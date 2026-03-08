@@ -19,6 +19,10 @@ let vehicles = [
   { id: 4, name: 'Maruti Alto', type: 'four-wheeler', price: 1500, status: 'available', description: 'Compact car - Economy friendly' },
   { id: 5, name: 'Mahindra XUV500', type: 'four-wheeler', price: 2500, status: 'available', description: 'SUV - Spacious and comfortable' },
   { id: 6, name: 'Hyundai Creta', type: 'four-wheeler', price: 2000, status: 'available', description: 'Sedan - Premium comfort' },
+  { id: 7, name: 'BMW X5', type: 'four-wheeler', price: 5000, status: 'available', description: 'Luxury SUV - Ultimate comfort and performance' },
+  { id: 8, name: 'Mercedes-Benz C-Class', type: 'four-wheeler', price: 4500, status: 'available', description: 'Luxury Sedan - Elegant and sophisticated' },
+  { id: 9, name: 'Audi Q7', type: 'four-wheeler', price: 5500, status: 'available', description: 'Premium SUV - Advanced technology and luxury' },
+  { id: 10, name: 'Porsche 911', type: 'four-wheeler', price: 8000, status: 'available', description: 'Sports Car - High-performance luxury vehicle' },
 ]
 
 let bookings = []
